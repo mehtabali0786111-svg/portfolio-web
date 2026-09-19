@@ -41,9 +41,11 @@
   --color-light-text: #f0f0f0;
   --color-dark-text: #1a1a1a;
   --color-light-border: #d6d0c8;
-  --color-dark-border: #1f1f1f;
+  --color-secondary: #7a7a7a;
+
+  --color-light-box: #f0ede8;
+  --color-light-theme-text: #3d3d3d;
 
   /*Custom Font*/
-
   --font-satoshi: "Satoshi", sans-serif;
 }
