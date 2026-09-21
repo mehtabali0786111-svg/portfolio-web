@@ -1,6 +1,5 @@
 import Main from "@/components/layout/Main";
 import Navbar from "@/components/layout/Navbar";
-import { div } from "motion/react-client";
 import React from "react";
 
 function page() {

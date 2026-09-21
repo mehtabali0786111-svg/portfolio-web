@@ -1,7 +1,4 @@
-import Button from "@/components/ui/Button";
 import Image from "next/image";
-import React from "react";
-import { PiHandWavingDuotone } from "react-icons/pi";
 import WaveForm from "./components/WaveForm";
 import TimerDisplay from "./components/TimerDisplay";
 import NotePad from "./components/NotePad";
@@ -9,66 +6,63 @@ import Wallet from "./components/Wallet";
 
 function AboutMe() {
   return (
-    <section className="py-32 px-16 border-x border-light-border border-b">
-      <h4 className="font-satoshi text-[22px] text-primary  mb-1 italic">
-        // About me
+    <section className="border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32">
+      <h4 className="mb-1 font-satoshi text-[18px] italic text-primary sm:text-[22px]">
+        {"// About me"}
       </h4>
-      <h3 className="font-satoshi  text-[36px] font-bold text-[#3d3d3d] text-justify  mb-8">
+      <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
         The person behind the pixels
       </h3>
-      <div className="grid grid-cols-[350px_1fr_1fr] grid-rows-2 gap-3 w-full min-h-auto ">
-        {/* Left image — spans both rows */}
-        <div className="row-span-2 relative  h-full min-w-[350px] ">
+
+      <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[350px_1fr_1fr] lg:grid-rows-2">
+        <div className="relative min-h-[300px] overflow-hidden rounded-2xl md:col-span-2 md:min-h-[340px] lg:col-span-1 lg:row-span-2 lg:min-h-0 lg:min-w-[350px]">
           <Image
             src="/images/person_pic.jpg"
             width={300}
             height={100}
             alt="person photo"
-            className="rounded-2xl object-cover h-[stretch] w-full"
+            className="h-full w-full rounded-2xl object-cover"
           />
         </div>
 
-        {/* Top-right: two boxes */}
-        <div className="col-span-2 flex gap-3 max-h-[270px]">
-          <div className="flex-1 bg-light-box rounded-2xl group overflow-hidden relative">
-            <div className="flex h-full flex-col  p-1">
+        <div className="grid grid-cols-2 gap-3 md:col-span-2 lg:max-h-[230px]">
+          <div className="group relative min-h-[150px] overflow-hidden rounded-2xl bg-light-box sm:min-h-[170px] md:min-h-[190px] lg:min-h-[220px]">
+            <div className="flex h-full flex-col p-1">
               <Image
                 src="/images/color_comp.jpg"
                 width={100}
                 height={100}
                 alt="Rainbow"
-                className="-translate-y-[50%] rounded-full h-stretch! w-full object-cover cursor-pointer transition-transform duration-300 hover:scale-110 "
-                style={{ height: "stretch" }}
+                className="h-full w-full -translate-y-[50%] cursor-pointer rounded-full object-cover transition-transform duration-300 hover:scale-110"
               />
 
-              <div className="flex flex-col -gap-2 h-full items-center relative -top-1/3">
+              <div className="relative -top-1/3 flex h-full flex-col -gap-2 items-center">
                 <WaveForm />
-                <p className="text-[12px] font-satoshi text-light-theme-text/60">
+                <p className="font-satoshi text-[12px] text-light-theme-text/60">
                   Tyler
                 </p>
-                <p className="text-[16px] font-satoshi text-light-theme-text mb-1">
+                <p className="mb-1 text-center font-satoshi text-[13px] text-light-theme-text sm:text-[16px]">
                   See you again
                 </p>
 
-                <div className="w-7 h-0.5 flex justify-center bg-dark-grey mb-1"></div>
+                <div className="mb-1 flex h-0.5 w-7 justify-center bg-dark-grey" />
 
                 <TimerDisplay />
               </div>
             </div>
           </div>
 
-          <div className="flex-1 bg-light-box rounded-2xl">
+          <div className="min-h-[150px] rounded-2xl bg-light-box sm:min-h-[170px] md:min-h-[190px] lg:min-h-[220px]">
             <Wallet />
           </div>
         </div>
 
-        {/* Bottom-right: one box spanning both columns */}
-        <div className="col-span-2 bg-light-box min-w-0 rounded-2xl w-full relative p-2">
-          <div className="w-[60%] h-2 absolute top-[20%] left-1/2 -translate-x-1/2 rounded-full bg-light "></div>
+        <div className="isolate relative min-h-[210px] w-full min-w-0 overflow-hidden rounded-2xl bg-light-box p-2 md:col-span-2 md:min-h-[230px] lg:min-h-[250px]">
+          <div className="absolute top-[20%] left-1/2 h-2 w-[60%] -translate-x-1/2 rounded-full bg-light" />
           <NotePad />
 
-          <p className=" absolute bottom-3 text-[24px] font-satoshi -z-0 w-full text-center">
-            I have a surprise for you 🙃
+          <p className="absolute bottom-3 z-0 w-full text-center font-satoshi text-[18px] sm:text-[22px] lg:text-[24px]">
+            I have a surprise for you :)
           </p>
         </div>
       </div>

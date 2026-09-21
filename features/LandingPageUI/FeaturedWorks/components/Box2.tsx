@@ -1,8 +1,8 @@
 import { featuredWorks } from "../featuredWorks.data";
 import WorkCard from "./WorkCard";
 
-const Box = () => {
-  return <WorkCard work={featuredWorks[1]} />;
+const Box2 = () => {
+  return <WorkCard work={featuredWorks[2]} />;
 };
 
-export default Box;
+export default Box2;

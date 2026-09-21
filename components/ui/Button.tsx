@@ -10,7 +10,7 @@ interface ButtonProps {
 function Button({ buttonTxt, hasAnimation }: ButtonProps) {
   return (
     <button
-      className={`group flex items-center space-x-2 rounded-full border border-light-border px-4  py-2.5 transition-colors duration-200 hover:text-primary cursor-pointer font-satoshi ${hasAnimation ? "shadow-md bg-white" : "bg-transparent"}`}
+      className={`group flex min-h-11 items-center space-x-2 rounded-full border border-light-border px-4 py-2.5 font-satoshi text-sm transition-colors duration-200 hover:text-primary cursor-pointer sm:text-base ${hasAnimation ? "shadow-md bg-white" : "bg-transparent"}`}
     >
       {hasAnimation ? (
         <>

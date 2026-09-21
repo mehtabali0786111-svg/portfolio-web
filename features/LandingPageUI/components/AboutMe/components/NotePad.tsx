@@ -44,7 +44,6 @@ function NotePad() {
     const container = containerRef.current;
     const note = noteRef.current;
 
-    console.log(container, note);
     if (!container || !note) return { x: 0, y: 0 };
 
     const containerRect = container.getBoundingClientRect();
@@ -128,11 +127,11 @@ function NotePad() {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 flex items-center justify-center overflow-hidden z-10"
+      className="relative z-20 flex min-h-[176px] items-center justify-center overflow-hidden px-4 pb-8 pt-3 md:min-h-[196px] lg:min-h-[216px]"
     >
       <div
         ref={noteRef}
-        className="relative w-fit cursor-pointer will-change-transform"
+        className="relative w-[112px] cursor-pointer will-change-transform sm:w-[124px] lg:w-[136px]"
         onMouseEnter={handleNoteEnter}
       >
         <Image
@@ -140,25 +139,25 @@ function NotePad() {
           width={136.7}
           height={136.7}
           alt="notepad Image"
-          className="object-cover aspect-auto"
+          className="h-auto w-full object-cover"
         />
 
-        <div className="absolute right-3 top-0">
+        <div className="absolute right-[9%] top-0 w-[17%]">
           <Image
             src="/images/pin.png"
             width={23}
             height={32}
             alt="pin Image"
-            className="object-cover aspect-auto"
+            className="h-auto w-full object-cover"
           />
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center px-3 pointer-events-none">
           <span
             ref={contentRef}
-            className="text-xs font-medium text-neutral-700 text-center leading-snug"
+            className="text-center text-[10px] font-medium leading-snug text-neutral-700 sm:text-xs"
           >
-            Hey, how's your day going?
+            {"Hey, how's your day going?"}
           </span>
         </div>
       </div>

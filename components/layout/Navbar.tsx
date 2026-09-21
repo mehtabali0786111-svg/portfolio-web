@@ -14,13 +14,13 @@ const navItems = [
 
 function Navbar() {
   return (
-    <nav className="fixed rounded-xl border border-light-border bg-bg-light p-3 top-1/2 -translate-y-1/2 left-6 ">
+    <nav className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-light-border bg-light/90 p-3 shadow-lg backdrop-blur md:left-6 md:top-1/2 md:bottom-auto md:-translate-x-0 md:-translate-y-1/2">
       <div
         className="
-          group flex w-6 cursor-pointer flex-col gap-4
+          group flex cursor-pointer gap-4
           overflow-hidden
           transition-all duration-300
-          hover:w-22
+          md:w-6 md:flex-col md:hover:w-22
         "
       >
         {navItems.map(({ icon: Icon, label }) => (
@@ -28,7 +28,7 @@ function Navbar() {
             <span className="flex w-6 flex-shrink-0 items-center justify-center">
               <Icon size={22} />
             </span>
-            <span className="whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <span className="hidden whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover:opacity-100 md:inline">
               {label}
             </span>
           </div>

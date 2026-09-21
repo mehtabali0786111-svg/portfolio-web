@@ -3,8 +3,8 @@ import React from "react";
 
 function Wallet() {
   return (
-    <div className="flex items-center justify-center h-[stretch]">
-      <div className="border border-light-border rounded-xl   w-[80%] h-[120px] border-b-[0px]">
+    <div className="flex h-full min-h-[150px] items-center justify-center sm:min-h-[170px] md:min-h-[190px] lg:min-h-[220px]">
+      <div className="h-[92px] w-[78%] max-w-[160px] rounded-xl border border-b-0 border-light-border sm:h-[108px] md:h-[118px]">
         <div></div>
 
         <div className="relative">
@@ -13,7 +13,7 @@ function Wallet() {
             width={165}
             height={100}
             alt="light texture"
-            className="object-cover aspect-auto rounded-xl "
+            className="aspect-[1.65] w-full rounded-xl object-cover"
           />
 
           <div className="w-[95%] h-0.5 bg-light-border absolute bottom-[10%] -translate-x-1/2 left-1/2 rounded-md"></div>
@@ -24,7 +24,7 @@ function Wallet() {
             width={68}
             height={45}
             alt="flag"
-            className="object-cover aspect-auto rounded-xl absolute top-3 right-2 rotate-[22deg]"
+            className="absolute top-3 right-2 w-[42%] rotate-[22deg] rounded-xl object-cover"
           />
 
           <Image
@@ -32,7 +32,7 @@ function Wallet() {
             width={55}
             height={46}
             alt="bull"
-            className="object-cover aspect-auto rounded-xl  absolute bottom-5"
+            className="absolute bottom-5 w-[34%] rounded-xl object-cover"
           />
         </div>
       </div>
