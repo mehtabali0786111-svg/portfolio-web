@@ -80,7 +80,7 @@ export default function Service() {
 
     const sectionRect = sectionRef.current.getBoundingClientRect();
     const previewRect = previewRef.current.getBoundingClientRect();
-    const offset = 24;
+    const offset = -85;
     const x = Math.min(
       event.clientX - sectionRect.left + offset,
       sectionRect.width - previewRect.width - offset,
@@ -140,10 +140,7 @@ export default function Service() {
     );
   };
 
-  const showPreview = (
-    event: React.MouseEvent<HTMLElement>,
-    image: string,
-  ) => {
+  const showPreview = (event: React.MouseEvent<HTMLElement>, image: string) => {
     setPreviewImage(image);
     positionPreview(event);
 
@@ -186,16 +183,16 @@ export default function Service() {
       ref={sectionRef}
       className="relative overflow-hidden border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32"
     >
-      <h4 className="mb-1 font-satoshi text-[18px] italic text-primary sm:text-[22px]">
+      <h4 className="mb-1 font-satoshi text-[22px] italic text-primary sm:text-[22px]">
         {"// Services i provide"}
       </h4>
-      <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
+      <h3 className="mb-8 font-satoshi text-[36px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
         I can help you with these things
       </h3>
 
       <div
         ref={previewRef}
-        className="pointer-events-none absolute left-0 top-0 z-20 hidden h-36 w-52 overflow-hidden rounded-md border border-light-border bg-light opacity-0 shadow-[0_18px_45px_rgba(10,10,10,0.16)] lg:block"
+        className="pointer-events-none absolute -left-1/2 -top-1/2 z-20 hidden h-36 w-52 overflow-hidden rounded-md border border-light-border bg-light opacity-0 shadow-[0_18px_45px_rgba(10,10,10,0.16)] lg:block"
         aria-hidden="true"
       >
         <Image
