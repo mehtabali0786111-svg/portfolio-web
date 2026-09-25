@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
   font-family: "Satoshi";
@@ -45,7 +48,92 @@
 
   --color-light-box: #f0ede8;
   --color-light-theme-text: #3d3d3d;
+  --color-dot: #d8d2c8;
+  --contribution-empty: #e9e5de;
+  --contribution-low: #a6ddb5;
+  --contribution-medium: #58bb76;
+  --contribution-high: #2f8f50;
+  --contribution-peak: #176338;
 
   /*Custom Font*/
   --font-satoshi: "Satoshi", sans-serif;
+}
+
+/* The palette utilities above intentionally use CSS variables.  Toggling the
+   `dark` class therefore updates existing Tailwind classes across every route. */
+html {
+  background: var(--color-light);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-light);
+  color: var(--color-dark-text);
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-light: #090909;
+  --color-dark: #f7f5f2;
+  --color-dark-grey: #e8e5df;
+  --color-light-text: #e8e5df;
+  --color-dark-text: #f7f5f2;
+  --color-light-border: #282828;
+  --color-secondary: #a6a6a6;
+  --color-light-box: #171717;
+  --color-light-theme-text: #e9e7e3;
+  --color-dim-text: #b4b4b4;
+  --color-dot: #252525;
+  --contribution-empty: #242424;
+  --contribution-low: #1d6338;
+  --contribution-medium: #278a4e;
+  --contribution-high: #35ad63;
+  --contribution-peak: #61d888;
+}
+
+/* Legacy literal light colours in the existing cards and work-detail page. */
+html.dark [class~="bg-white"],
+html.dark [class~="bg-[#fafafa]"],
+html.dark [class~="bg-[#f7f6f3]"],
+html.dark [class~="bg-[#f6f5f3]"] {
+  background-color: #171717;
+}
+
+html.dark [class*="bg-white/"],
+html.dark [class~="bg-neutral-100"],
+html.dark [class~="bg-[#F3EFE7]"],
+html.dark [class~="bg-[#F1EEE7]"],
+html.dark [class~="bg-[#EEF0F3]"],
+html.dark [class~="bg-[#f0efec]"] {
+  background-color: #171717;
+}
+
+html.dark [class*="text-[#3d3d3d]"],
+html.dark [class~="text-neutral-900"],
+html.dark [class~="text-neutral-800"] {
+  color: var(--color-dark-text);
+}
+
+html.dark [class~="text-neutral-700"],
+html.dark [class~="text-neutral-600"] {
+  color: #d0ceca;
+}
+
+html.dark [class~="text-neutral-500"],
+html.dark [class~="text-[#777]"] {
+  color: var(--color-secondary);
+}
+
+html.dark [class~="border-neutral-200"],
+html.dark [class~="border-[#e8e5df]"],
+html.dark [class~="border-[#dedbd5]"],
+html.dark [class~="border-[#d8d5d0]"] {
+  border-color: var(--color-light-border);
+}
+
+@media (max-width: 900) {
+  .card-hide {
+    display: none;
+  }
 }

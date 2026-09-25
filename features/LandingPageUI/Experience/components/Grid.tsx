@@ -41,11 +41,11 @@ const contributionCells = Array.from(
 );
 
 const contributionColors = [
-  "bg-[#efede9]",
-  "bg-[#3cc56b]",
-  "bg-[#2fa95b]",
-  "bg-[#217b42]",
-  "bg-[#165f33]",
+  "bg-[var(--contribution-empty)]",
+  "bg-[var(--contribution-low)]",
+  "bg-[var(--contribution-medium)]",
+  "bg-[var(--contribution-high)]",
+  "bg-[var(--contribution-peak)]",
 ];
 
 const techIcons = [
@@ -127,44 +127,84 @@ const Grid = () => {
           879 contributions in the template timeline
         </p>
 
-        <div className="overflow-x-auto pb-2">
-          <div
-            className="relative grid min-w-[680px] gap-1.5"
-            style={{
-              gridTemplateColumns: `repeat(${CONTRIBUTION_COLS}, minmax(0, 1fr))`,
-            }}
-          >
-            {contributionCells.map((level, index) => {
-              const isActive = hoveredCell?.index === index;
-              const contributionText =
-                hoveredCell?.contributions === 1
-                  ? "contribution"
-                  : "contributions";
-
-              return (
+        <div className="relative w-full pb-8">
+          {/* SCROLLING AREA */}
+          <div className="overflow-x-hidden">
+            <div
+              className="relative grid min-w-[680px] gap-1.5"
+              style={{
+                gridTemplateColumns: `repeat(${CONTRIBUTION_COLS}, minmax(0, 1fr))`,
+              }}
+            >
+              {contributionCells.map((level, index) => (
                 <div
                   key={index}
-                  onMouseEnter={() => {
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+
                     setHoveredCell({
                       index,
                       contributions: Math.floor(Math.random() * 18),
                       date: getContributionDate(index),
+
+                      // Position relative to viewport
+                      x: rect.left + rect.width / 2,
+                      y: rect.top,
                     });
                   }}
                   onMouseLeave={() => setHoveredCell(null)}
                   className={`relative aspect-square rounded-[3px] transition-transform duration-150 hover:z-20 hover:scale-110 ${contributionColors[level]}`}
-                >
-                  {isActive ? (
-                    <div className="pointer-events-none absolute left-1/2 bottom-[calc(100%+10px)] z-100 w-max -translate-x-1/2 rounded-md bg-[#77777c] px-3 py-2 font-satoshi text-[12px] font-bold text-light shadow-lg">
-                      {hoveredCell.contributions} {contributionText} on{" "}
-                      {hoveredCell.date}
-                      <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#77777c]" />
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
+                />
+              ))}
+            </div>
           </div>
+
+          {/* TOOLTIP IS OUTSIDE THE SCROLL CONTAINER */}
+          {hoveredCell && (
+            <div
+              className="
+        pointer-events-none
+        fixed
+        z-[9999]
+        w-max
+        -translate-x-1/2
+        -translate-y-full
+        rounded-md
+        bg-[#77777c]
+        px-3
+        py-2
+        font-satoshi
+        text-[12px]
+        font-bold
+        text-light
+        shadow-lg
+      "
+              style={{
+                left: hoveredCell.x,
+                top: hoveredCell.y - 10,
+              }}
+            >
+              {hoveredCell.contributions}{" "}
+              {hoveredCell.contributions === 1
+                ? "contribution"
+                : "contributions"}{" "}
+              on {hoveredCell.date}
+              {/* Arrow */}
+              <span
+                className="
+          absolute
+          left-1/2
+          top-full
+          h-2
+          w-2
+          -translate-x-1/2
+          -translate-y-1/2
+          rotate-45
+          bg-[#77777c]
+        "
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -195,7 +235,7 @@ const Grid = () => {
                     {row.map((Icon, iconIndex) => (
                       <div
                         key={`${copyIndex}-${rowIndex}-${iconIndex}`}
-                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[#f6f5f3] text-[#111111] opacity-55 shadow-sm grayscale transition-opacity duration-300 hover:opacity-90 sm:h-16 sm:w-16"
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-light-box text-dark-text opacity-80 shadow-sm grayscale-[0.2] transition-all duration-300 hover:opacity-100 hover:grayscale-0 sm:h-16 sm:w-16"
                       >
                         <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
                       </div>

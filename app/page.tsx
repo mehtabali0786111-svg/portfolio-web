@@ -4,12 +4,12 @@ import React from "react";
 
 function page() {
   return (
-    <div className="relative min-h-screen ">
+    <div className="relative min-h-screen overflow-hidden">
       <div
         className="pointer-events-none fixed inset-0 -z-10"
         style={{
           backgroundImage:
-            "radial-gradient(circle, #474747fa 0.1px, transparent 1px)",
+            "radial-gradient(circle, var(--color-dot) 0.1px, transparent 1px)",
           backgroundSize: "25px 25px",
           maskImage:
             "radial-gradient(ellipse at center, transparent 0%, transparent 30%, black 80%)",
@@ -39,6 +39,7 @@ function page() {
     [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,#6b767c_50%,#3d4448_100%]
   "
       />
+
       <Navbar />
 
       <Main />

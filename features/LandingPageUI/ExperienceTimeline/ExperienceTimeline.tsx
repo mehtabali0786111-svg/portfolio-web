@@ -196,17 +196,17 @@ const ExperienceTimeline = () => {
             <article
               key={experience.number}
               ref={(element) => {
-              if (element) itemsRef.current[index] = element;
-            }}
-            className="grid min-h-[var(--timeline-row)] grid-cols-[58px_1fr] gap-4 opacity-0 sm:grid-cols-[88px_1fr] sm:gap-12"
-          >
-            <div className="relative z-10 pt-4">
+                if (element) itemsRef.current[index] = element;
+              }}
+              className="grid min-h-[var(--timeline-row)] grid-cols-[58px_1fr] gap-4 opacity-0 sm:grid-cols-[88px_1fr] sm:gap-12"
+            >
+              <div className="relative z-10 pt-4">
                 <div
                   ref={(element) => {
                     if (element) numbersRef.current[index] = element;
                   }}
-                className="flex h-10 w-12 items-center justify-center rounded-lg bg-white/80 font-satoshi text-[22px] font-medium italic leading-none sm:w-[68px] sm:text-[28px]"
-              >
+                  className="flex h-10 w-12 items-center justify-center rounded-lg border border-light-border bg-light-box font-satoshi text-[22px] font-medium italic leading-none text-dark-text sm:w-[68px] sm:text-[28px]"
+                >
                   {experience.number}
                 </div>
               </div>

@@ -14,7 +14,7 @@ const WorkCard = ({ work, layout = "vertical" }: WorkCardProps) => {
 
   return (
     <article
-      className={`overflow-hidden rounded-2xl border border-light-border bg-light shadow-md ${
+      className={`overflow-hidden rounded-2xl border border-light-border bg-light shadow-md h-[-webkit-fill-available] ${
         isHorizontal ? "grid lg:grid-cols-[0.95fr_1.05fr]" : "flex flex-col"
       }`}
     >
@@ -23,9 +23,9 @@ const WorkCard = ({ work, layout = "vertical" }: WorkCardProps) => {
         width={520}
         height={320}
         alt={work.imageAlt}
-        className={`h-full w-full object-cover ${
+        className={` w-full object-cover ${
           isHorizontal
-            ? "aspect-[1.45] max-h-[300px] lg:min-h-[320px] lg:max-h-none"
+            ? "aspect-[1.45] max-h-[300px] lg:min-h-[320px]"
             : "aspect-[1.45] max-h-[260px]"
         }`}
       />
@@ -33,7 +33,7 @@ const WorkCard = ({ work, layout = "vertical" }: WorkCardProps) => {
         className={
           isHorizontal
             ? "flex flex-col justify-between "
-            : "flex h-full flex-col justify-between"
+            : "flex h-[stretch] flex-col justify-between"
         }
       >
         <ContentBox title={work.title} description={work.description}>

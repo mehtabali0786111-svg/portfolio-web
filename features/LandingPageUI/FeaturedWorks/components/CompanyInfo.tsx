@@ -10,7 +10,7 @@ interface CompanyInfoProps {
 const CompanyInfo = ({ company, role, logoSrc }: CompanyInfoProps) => {
   return (
     <div className="relative flex items-center justify-between gap-3 px-5 pb-6 sm:pl-6 sm:pr-4 sm:pb-8">
-      <div className="w-[90%] bg-light-text h-0.5 absolute -translate-x-1/2 left-1/2 rounded-lg -top-[10%]  "></div>
+      <div className="absolute -top-[10%] left-1/2 h-0.5 w-[90%] -translate-x-1/2 rounded-lg bg-light-border" />
       <div className="flex min-w-0 gap-2 pt-3">
         <div className="rounded-lg bg-light-box p-1.5">
           <Image
@@ -33,9 +33,9 @@ const CompanyInfo = ({ company, role, logoSrc }: CompanyInfoProps) => {
       <button
         type="button"
         aria-label={`View ${company} case study`}
-        className="
+        className=" relative top-[5px]
           group flex h-[45px] cursor-pointer items-center justify-center
-          rounded-full border border-light-border p-[4px_10px] text-light
+          rounded-full border border-light-border p-[4px_10px] text-white
           shadow-sm transition-[transform] duration-400
         "
       >

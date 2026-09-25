@@ -179,9 +179,9 @@ export default function Service() {
   };
 
   return (
-    <section
+    <section id="services"
       ref={sectionRef}
-      className="relative overflow-hidden border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32"
+      className="scroll-mt-8 relative overflow-hidden border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32"
     >
       <h4 className="mb-1 font-satoshi text-[22px] italic text-primary sm:text-[22px]">
         {"// Services i provide"}

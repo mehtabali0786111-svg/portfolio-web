@@ -1,63 +1,94 @@
-import { div } from "motion/react-client";
 import Image from "next/image";
-import React from "react";
 
-const icons: string[] = [
-  "/images/github.jpg",
-  "/images/gmail.jpg",
-  "/images/linkdin.jpg",
-  "/images/twitter.jpg",
+interface FooterProps {
+  footerInDetail?: boolean;
+}
+
+const icons = [
+  {
+    src: "/images/github.jpg",
+    alt: "GitHub",
+  },
+  {
+    src: "/images/gmail.jpg",
+    alt: "Gmail",
+  },
+  {
+    src: "/images/linkdin.jpg",
+    alt: "LinkedIn",
+  },
+  {
+    src: "/images/twitter.jpg",
+    alt: "Twitter",
+  },
 ];
 
-export default function Footer() {
+export default function Footer({ footerInDetail = false }: FooterProps) {
   return (
     <>
-      <div className="flex gap-3 flex-start w-full items-center">
-        <div className=" flex-1 bg-light-border h-[1px]"></div>
-        <div className="flex gap-2  ">
-          {icons.map((url, indx) => (
+      {/* Social Icons Divider */}
+      <div className="flex w-full items-center gap-3 border-x border-light-border">
+        {/* Left Line */}
+        <div className="h-px flex-1 bg-light-border" />
+
+        {/* Social Icons */}
+        <div className="flex items-center gap-2">
+          {icons.map((icon) => (
             <div
-              key={indx}
-              className="p-1.5 border border-light-border rounded-md "
+              key={icon.src}
+              className="cursor-pointer rounded-md border border-light-border p-1.5"
             >
               <Image
-                src={url}
+                src={icon.src}
                 width={16}
                 height={16}
-                alt="social icon"
-                className="hover:scale-105 cursor-pointer will-change-transform transition-transform"
+                alt={icon.alt}
+                className="block object-contain transition-transform duration-200 hover:scale-105"
               />
             </div>
           ))}
         </div>
-        <div className=" flex-1 bg-light-border h-[1px]"></div>
+
+        {/* Right Line */}
+        <div className="h-px flex-1 bg-light-border" />
       </div>
 
-      <section className="relative overflow-hidden border-x border-b -top-4 border-light-border px-5 py-4 sm:px-8  md:py-14 lg:px-16 lg:pt-22 ">
-        <div className="flex justify-center items-center w-full gap-5 mb-14">
-          <span className="font-satoshi text-light-theme-text tracking-wide hidden md:inline">
+      {/* Footer */}
+      <section
+        className={`relative overflow-hidden border-light-border px-5 py-4 sm:px-8 md:py-20 lg:px-16 lg:pt-22 ${
+          footerInDetail ? "" : "border-x"
+        }`}
+      >
+        {/* Top Message */}
+        <div className="mb-14 flex w-full items-center justify-center gap-5">
+          <span className="hidden font-satoshi tracking-wide text-light-theme-text md:inline">
             Thank you, for visiting here
           </span>
+
           <Image
             src="/images/stamp.png"
             width={110}
             height={110}
-            alt="social icon"
-            className="hidden md:inline"
+            alt="Decorative stamp"
+            className="hidden object-contain md:inline"
           />
-          <span className="font-satoshi text-light-theme-text tracking-wide hidden md:inline">
+
+          <span className="hidden font-satoshi tracking-wide text-light-theme-text md:inline">
             Let's create something beautiful
           </span>
         </div>
 
-        <div className="flex flex-col justify-center items-center gap-5">
+        {/* Signature */}
+        <div className="flex flex-col items-center justify-center gap-5">
           <Image
             src="/images/sign.png"
             width={147}
             height={70}
-            alt="sign icon"
+            alt="Signature"
+            className="object-contain"
           />
-          <span className="text-xs text-light-theme-text/70 font-satoshi">
+
+          <span className="font-satoshi text-xs text-light-theme-text/70">
             @apexita 2026
           </span>
         </div>

@@ -1,775 +1,709 @@
 "use client";
 
 import Image from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaQuoteLeft } from "react-icons/fa6";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { FaArrowLeft, FaArrowRight, FaQuoteLeft } from "react-icons/fa6";
 
-type Direction = "next" | "prev";
+// =======================================================
+// TYPES
+// =======================================================
 
-type Testimonial = {
+type Direction = "next" | "previous";
+
+interface Testimonial {
   id: number;
   name: string;
   role: string;
-  company: string;
-  text: string;
+  quote: string;
   image: string;
-};
+}
+
+// =======================================================
+// TESTIMONIAL DATA
+// =======================================================
 
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Marcus Reid",
-    role: "Co-founder",
-    company: "Orion Labs",
-    text: "Working with Zolt was a different experience. He didn't just deliver designs he delivered a working product.",
+    name: "Sarah Mitchell",
+    role: "Product Designer",
+    quote:
+      "The team transformed our entire digital experience. Every interaction feels thoughtful and refined.",
     image: "/images/person1.jpg",
   },
   {
     id: 2,
-    name: "Sarah Mitchell",
-    role: "Product Manager",
-    company: "Nova Studio",
-    text: "The attention to detail and commitment to quality made the entire project feel effortless. The final result exceeded our expectations.",
+    name: "James Anderson",
+    role: "Creative Director",
+    quote:
+      "Their attention to detail and ability to turn complex ideas into simple experiences was impressive.",
     image: "/images/person2.jpg",
   },
   {
     id: 3,
-    name: "Daniel Cooper",
-    role: "Founder",
-    company: "Pixel Works",
-    text: "From the first conversation to the final delivery, everything was thoughtful, professional, and focused on building something meaningful.",
+    name: "Emily Carter",
+    role: "Marketing Manager",
+    quote:
+      "A smooth and collaborative process from beginning to end. The final product exceeded our expectations.",
     image: "/images/person3.jpg",
   },
   {
     id: 4,
-    name: "Emily Carter",
-    role: "Creative Director",
-    company: "North Studio",
-    text: "A rare combination of creativity and technical execution. Every decision was made with the user experience in mind.",
+    name: "Daniel Wilson",
+    role: "Founder",
+    quote:
+      "They understood our vision immediately and created something that felt unique to our brand.",
+    image: "/images/personal.png",
+  },
+  {
+    id: 5,
+    name: "Olivia Thompson",
+    role: "Brand Strategist",
+    quote:
+      "The design feels elegant, purposeful, and incredibly easy to use. We loved working with the team.",
     image: "/images/person_pic.jpg",
   },
 ];
 
-const ROWS = 5;
+// =======================================================
+// CENTER COLUMN
+// =======================================================
 
-/*
-|--------------------------------------------------------------------------
-| Grid animation values
-|--------------------------------------------------------------------------
-|
-| Center column:
-|   base  = -24
-|   pulse = -38
-|
-| Side columns:
-|   base  = +24
-|   pulse = +38
-|
-| Image cell:
-|   base  = +24
-|   pulse = +38
-|
-| This means:
-|
-| Center column       -24
-| Image cell inside   +24
-| -------------------------
-| Net image movement    0
-|
-| So the image stays physically centered.
-|--------------------------------------------------------------------------
-*/
+const CENTER_CELL_SIZE = 76;
+const CENTER_GAP = 8;
 
-const CENTER_BASE_Y = -24;
-const CENTER_PULSE_Y = -38;
+const ROW_COUNT = 11;
 
-const SIDE_BASE_Y = 24;
-const SIDE_PULSE_Y = 38;
+const IMAGE_ROWS = [2, 4, 6, 8, 10];
 
-const IMAGE_BASE_Y = 24;
-const IMAGE_PULSE_Y = 38;
+const CENTER_STEP = CENTER_CELL_SIZE + CENTER_GAP;
 
-export default function Testimonials() {
+const CENTER_TRACK_HEIGHT =
+  ROW_COUNT * CENTER_CELL_SIZE + (ROW_COUNT - 1) * CENTER_GAP;
+
+// =======================================================
+// LEFT COLUMN
+// All cells are >= CENTER_CELL_SIZE
+// =======================================================
+
+const LEFT_CELL_WIDTH = 76;
+
+const LEFT_GAP = 8;
+
+const LEFT_HEIGHTS = [88, 108, 76, 94, 82, 116, 78, 104, 86];
+
+const LEFT_ROW_COUNT = LEFT_HEIGHTS.length;
+
+// =======================================================
+// RIGHT COLUMN
+// All cells are >= CENTER_CELL_SIZE
+// =======================================================
+
+const RIGHT_CELL_WIDTH = 76;
+
+const RIGHT_GAP = 8;
+
+const RIGHT_HEIGHTS = [106, 78, 112, 86, 120, 76, 98, 84, 110, 80, 104];
+
+const RIGHT_ROW_COUNT = RIGHT_HEIGHTS.length;
+
+// =======================================================
+// VIEWPORT
+// =======================================================
+
+const VIEWPORT_HEIGHT = CENTER_CELL_SIZE + CENTER_STEP;
+
+// Center of the visible grid
+const VIEWPORT_CENTER = VIEWPORT_HEIGHT / 2;
+
+// =======================================================
+// ALIGNMENT HELPERS
+// =======================================================
+
+/**
+ * Calculates the Y position required to place
+ * the selected cell's center at the viewport center.
+ *
+ * Supports irregular cell heights.
+ */
+const getIrregularMiddleAlignedY = (
+  heights: number[],
+  gap: number,
+  middleIndex: number,
+) => {
+  const middleCellHeight = heights[middleIndex];
+
+  let heightBeforeMiddle = 0;
+
+  for (let i = 0; i < middleIndex; i++) {
+    heightBeforeMiddle += heights[i] + gap;
+  }
+
+  return VIEWPORT_CENTER - heightBeforeMiddle - middleCellHeight / 2;
+};
+
+// =======================================================
+// MIDDLE INDICES
+// =======================================================
+
+const LEFT_MIDDLE_INDEX = Math.floor(LEFT_ROW_COUNT / 2);
+
+const CENTER_MIDDLE_INDEX = Math.floor(ROW_COUNT / 2);
+
+const RIGHT_MIDDLE_INDEX = Math.floor(RIGHT_ROW_COUNT / 2);
+
+// =======================================================
+// BASE POSITIONS
+// =======================================================
+
+const LEFT_BASE_Y = getIrregularMiddleAlignedY(
+  LEFT_HEIGHTS,
+  LEFT_GAP,
+  LEFT_MIDDLE_INDEX,
+);
+
+const RIGHT_BASE_Y = getIrregularMiddleAlignedY(
+  RIGHT_HEIGHTS,
+  RIGHT_GAP,
+  RIGHT_MIDDLE_INDEX,
+);
+
+// Center base alignment
+const CENTER_BASE_Y =
+  VIEWPORT_CENTER - CENTER_MIDDLE_INDEX * CENTER_STEP - CENTER_CELL_SIZE / 2;
+
+// =======================================================
+// CENTER POSITION
+// =======================================================
+
+const getCenterY = (index: number) => {
+  const imageRow = IMAGE_ROWS[index];
+
+  return CENTER_BASE_Y - (imageRow - CENTER_MIDDLE_INDEX) * CENTER_STEP;
+};
+
+// =======================================================
+// COMPONENT
+// =======================================================
+
+export default function TestimonialGrid() {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const centerColumnRef = useRef<HTMLDivElement | null>(null);
+
+  const leftColumnRef = useRef<HTMLDivElement | null>(null);
+
+  const rightColumnRef = useRef<HTMLDivElement | null>(null);
 
   const activeTestimonial = testimonials[activeIndex];
 
-  /*
-  |--------------------------------------------------------------------------
-  | Refs
-  |--------------------------------------------------------------------------
-  */
+  // =====================================================
+  // NAVIGATION STATE
+  // =====================================================
 
-  const sectionRef = useRef<HTMLElement>(null);
+  const isFirstTestimonial = activeIndex === 0;
 
-  const leftColumnRef = useRef<HTMLDivElement>(null);
-  const centerColumnRef = useRef<HTMLDivElement>(null);
-  const rightColumnRef = useRef<HTMLDivElement>(null);
+  const isLastTestimonial = activeIndex === testimonials.length - 1;
 
-  const imageCellRef = useRef<HTMLDivElement>(null);
-  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const canGoPrevious = !isFirstTestimonial && !isAnimating;
 
-  const contentRef = useRef<HTMLDivElement>(null);
+  const canGoNext = !isLastTestimonial && !isAnimating;
 
-  /*
-  |--------------------------------------------------------------------------
-  | State refs
-  |--------------------------------------------------------------------------
-  */
+  // =====================================================
+  // ANIMATION
+  // =====================================================
 
-  const directionRef = useRef<Direction>("next");
+  const animateColumns = useCallback(
+    (nextIndex: number) => {
+      if (
+        !centerColumnRef.current ||
+        !leftColumnRef.current ||
+        !rightColumnRef.current
+      ) {
+        return;
+      }
 
-  const isAnimatingRef = useRef(false);
+      const currentCenterY = getCenterY(activeIndex);
 
-  const firstRenderRef = useRef(true);
+      const nextCenterY = getCenterY(nextIndex);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Initial grid position
-  |--------------------------------------------------------------------------
-  |
-  | The center column moves upward.
-  | The side columns move downward.
-  | The image cell compensates for the center movement.
-  |--------------------------------------------------------------------------
-  */
+      const centerMovementDirection = nextCenterY < currentCenterY ? -1 : 1;
 
-  useLayoutEffect(() => {
-    const left = leftColumnRef.current;
-    const center = centerColumnRef.current;
-    const right = rightColumnRef.current;
-    const imageCell = imageCellRef.current;
+      const oppositeMovement = centerMovementDirection === -1 ? 1 : -1;
 
-    if (!left || !center || !right || !imageCell) {
+      // Side columns move outward during the transition.
+      const sideTravel = CENTER_STEP * 3;
+
+      const leftStartY = LEFT_BASE_Y + oppositeMovement * sideTravel;
+
+      const rightStartY = RIGHT_BASE_Y + oppositeMovement * sideTravel;
+
+      const timeline = gsap.timeline({
+        onStart: () => {
+          setIsAnimating(true);
+        },
+
+        onComplete: () => {
+          setIsAnimating(false);
+        },
+
+        onInterrupt: () => {
+          setIsAnimating(false);
+        },
+      });
+
+      // =================================================
+      // CENTER COLUMN
+      // =================================================
+
+      timeline.to(
+        centerColumnRef.current,
+        {
+          y: nextCenterY,
+          duration: 0.85,
+          ease: "power3.inOut",
+        },
+        0,
+      );
+
+      // =================================================
+      // LEFT COLUMN
+      // =================================================
+
+      timeline.fromTo(
+        leftColumnRef.current,
+        {
+          y: LEFT_BASE_Y,
+        },
+        {
+          y: leftStartY,
+          duration: 0.38,
+          ease: "power2.out",
+        },
+        0,
+      );
+
+      timeline.to(
+        leftColumnRef.current,
+        {
+          y: LEFT_BASE_Y,
+          duration: 0.47,
+          ease: "power3.inOut",
+        },
+        0.38,
+      );
+
+      // =================================================
+      // RIGHT COLUMN
+      // =================================================
+
+      timeline.fromTo(
+        rightColumnRef.current,
+        {
+          y: RIGHT_BASE_Y,
+        },
+        {
+          y: rightStartY,
+          duration: 0.38,
+          ease: "power2.out",
+        },
+        0,
+      );
+
+      timeline.to(
+        rightColumnRef.current,
+        {
+          y: RIGHT_BASE_Y,
+          duration: 0.47,
+          ease: "power3.inOut",
+        },
+        0.38,
+      );
+    },
+    [activeIndex],
+  );
+
+  // =====================================================
+  // SAFE NAVIGATION
+  // =====================================================
+
+  const handleNavigation = useCallback(
+    (direction: Direction) => {
+      if (isAnimating) return;
+
+      if (direction === "previous" && activeIndex === 0) {
+        return;
+      }
+
+      if (direction === "next" && activeIndex === testimonials.length - 1) {
+        return;
+      }
+
+      const nextIndex =
+        direction === "next" ? activeIndex + 1 : activeIndex - 1;
+
+      if (nextIndex < 0 || nextIndex >= testimonials.length) {
+        return;
+      }
+
+      animateColumns(nextIndex);
+
+      setActiveIndex(nextIndex);
+    },
+    [activeIndex, animateColumns, isAnimating],
+  );
+
+  // =====================================================
+  // INITIAL POSITIONS
+  // =====================================================
+
+  useEffect(() => {
+    if (
+      !centerColumnRef.current ||
+      !leftColumnRef.current ||
+      !rightColumnRef.current
+    ) {
       return;
     }
 
-    const ctx = gsap.context(() => {
-      /*
-      ---------------------------------------------------------------
-      Initial positions
-      ---------------------------------------------------------------
-      */
+    gsap.set(centerColumnRef.current, {
+      y: getCenterY(0),
+    });
 
-      gsap.set(center, {
-        y: CENTER_BASE_Y,
-      });
+    gsap.set(leftColumnRef.current, {
+      y: LEFT_BASE_Y,
+    });
 
-      gsap.set([left, right], {
-        y: SIDE_BASE_Y,
-      });
+    gsap.set(rightColumnRef.current, {
+      y: RIGHT_BASE_Y,
+    });
+  }, []);
 
-      gsap.set(imageCell, {
-        y: IMAGE_BASE_Y,
-      });
-    }, sectionRef);
+  // =====================================================
+  // KEYBOARD NAVIGATION
+  // =====================================================
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't intercept arrow keys while typing in a form.
+      const target = event.target as HTMLElement | null;
+
+      const isTyping =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.isContentEditable;
+
+      if (isTyping) return;
+
+      if (event.key === "ArrowRight") {
+        handleNavigation("next");
+      }
+
+      if (event.key === "ArrowLeft") {
+        handleNavigation("previous");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      ctx.revert();
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNavigation]);
+
+  // =====================================================
+  // CLEANUP
+  // =====================================================
+
+  useEffect(() => {
+    return () => {
+      if (centerColumnRef.current) {
+        gsap.killTweensOf(centerColumnRef.current);
+      }
+
+      if (leftColumnRef.current) {
+        gsap.killTweensOf(leftColumnRef.current);
+      }
+
+      if (rightColumnRef.current) {
+        gsap.killTweensOf(rightColumnRef.current);
+      }
     };
   }, []);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Testimonial content / image animation
-  |--------------------------------------------------------------------------
-  */
-
-  useLayoutEffect(() => {
-    const content = contentRef.current;
-    const imageWrapper = imageWrapperRef.current;
-
-    if (!content || !imageWrapper) {
-      return;
-    }
-
-    const direction = directionRef.current;
-
-    const enterX = direction === "next" ? 45 : -45;
-    const enterY = direction === "next" ? 15 : -15;
-
-    /*
-    ----------------------------------------------------------------------
-    First render
-    ----------------------------------------------------------------------
-    */
-
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false;
-
-      const ctx = gsap.context(() => {
-        gsap.fromTo(
-          content,
-          {
-            opacity: 0,
-            x: 35,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.7,
-            ease: "power3.out",
-          },
-        );
-
-        gsap.fromTo(
-          imageWrapper,
-          {
-            opacity: 0,
-            scale: 1.08,
-            y: 12,
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.65,
-            ease: "power3.out",
-          },
-        );
-      }, sectionRef);
-
-      return () => {
-        ctx.revert();
-      };
-    }
-
-    /*
-    ----------------------------------------------------------------------
-    Subsequent testimonial changes
-    ----------------------------------------------------------------------
-    */
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        content,
-        {
-          opacity: 0,
-          x: enterX,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.55,
-          ease: "power3.out",
-        },
-      );
-
-      gsap.fromTo(
-        imageWrapper,
-        {
-          opacity: 0,
-          x: direction === "next" ? 15 : -15,
-          y: enterY,
-          scale: 1.08,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          scale: 1,
-          duration: 0.55,
-          ease: "power3.out",
-          onComplete: () => {
-            isAnimatingRef.current = false;
-          },
-        },
-      );
-    }, sectionRef);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [activeIndex]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Grid pulse animation
-  |--------------------------------------------------------------------------
-  |
-  | Every click produces a new visible movement.
-  |
-  | Center  : upward
-  | Sides   : downward
-  | Image   : downward compensation
-  |--------------------------------------------------------------------------
-  */
-
-  const animateGrid = () => {
-    const left = leftColumnRef.current;
-    const center = centerColumnRef.current;
-    const right = rightColumnRef.current;
-    const imageCell = imageCellRef.current;
-
-    if (!left || !center || !right || !imageCell) {
-      return;
-    }
-
-    const tl = gsap.timeline({
-      defaults: {
-        ease: "power3.out",
-      },
-    });
-
-    /*
-    ----------------------------------------------------------------------
-    Move farther in opposite directions
-    ----------------------------------------------------------------------
-    */
-
-    tl.to(
-      center,
-      {
-        y: CENTER_PULSE_Y,
-        duration: 0.22,
-      },
-      0,
-    )
-      .to(
-        [left, right],
-        {
-          y: SIDE_PULSE_Y,
-          duration: 0.22,
-        },
-        0,
-      )
-      .to(
-        imageCell,
-        {
-          y: IMAGE_PULSE_Y,
-          duration: 0.22,
-        },
-        0,
-      );
-
-    /*
-    ----------------------------------------------------------------------
-    Return to normal positions
-    ----------------------------------------------------------------------
-    */
-
-    tl.to(
-      center,
-      {
-        y: CENTER_BASE_Y,
-        duration: 0.4,
-        ease: "power3.inOut",
-      },
-      0.22,
-    )
-      .to(
-        [left, right],
-        {
-          y: SIDE_BASE_Y,
-          duration: 0.4,
-          ease: "power3.inOut",
-        },
-        0.22,
-      )
-      .to(
-        imageCell,
-        {
-          y: IMAGE_BASE_Y,
-          duration: 0.4,
-          ease: "power3.inOut",
-        },
-        0.22,
-      );
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | Change testimonial
-  |--------------------------------------------------------------------------
-  */
-
-  const changeTestimonial = (direction: Direction) => {
-    if (isAnimatingRef.current) {
-      return;
-    }
-
-    const content = contentRef.current;
-    const image = imageWrapperRef.current;
-
-    if (!content || !image) {
-      return;
-    }
-
-    isAnimatingRef.current = true;
-
-    directionRef.current = direction;
-
-    /*
-    ----------------------------------------------------------------------
-    Calculate new index
-    ----------------------------------------------------------------------
-    */
-
-    const nextIndex =
-      direction === "next"
-        ? (activeIndex + 1) % testimonials.length
-        : (activeIndex - 1 + testimonials.length) % testimonials.length;
-
-    /*
-    ----------------------------------------------------------------------
-    Animate current content OUT
-    ----------------------------------------------------------------------
-    */
-
-    const exitX = direction === "next" ? -45 : 45;
-    const exitY = direction === "next" ? -10 : 10;
-
-    const contentTimeline = gsap.timeline({
-      defaults: {
-        ease: "power2.inOut",
-      },
-      onComplete: () => {
-        /*
-        ---------------------------------------------------------------
-        Change React state only after the old content has left.
-        ---------------------------------------------------------------
-        */
-
-        setActiveIndex(nextIndex);
-      },
-    });
-
-    /*
-    ----------------------------------------------------------------------
-    Text exit
-    ----------------------------------------------------------------------
-    */
-
-    contentTimeline.to(
-      content,
-      {
-        opacity: 0,
-        x: exitX,
-        duration: 0.28,
-      },
-      0,
-    );
-
-    /*
-    ----------------------------------------------------------------------
-    Image exit
-    ----------------------------------------------------------------------
-    */
-
-    contentTimeline.to(
-      image,
-      {
-        opacity: 0,
-        x: direction === "next" ? -12 : 12,
-        y: exitY,
-        scale: 0.96,
-        duration: 0.28,
-      },
-      0,
-    );
-
-    /*
-    ----------------------------------------------------------------------
-    Grid moves at the same time
-    ----------------------------------------------------------------------
-    */
-
-    animateGrid();
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | Render
-  |--------------------------------------------------------------------------
-  */
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
-    <section
-      ref={sectionRef}
-      aria-label="Testimonials"
-      className="relative w-full overflow-hidden bg-[#fafafa] px-6 py-20 sm:px-10 lg:px-16"
-    >
-      {/* Background dots */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-60"
-        style={{
-          backgroundImage: "radial-gradient(#d5d5d5 0.9px, transparent 0.9px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
+    <section className="border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32">
+      <h4 className="mb-1 font-satoshi text-[18px] italic text-primary sm:text-[22px]">
+        {"// Featured works"}
+      </h4>
+      <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
+        These are ones that taught me the most
+      </h3>
 
-      <div className="relative z-10 mx-auto max-w-7xl">
-        {/* ========================================================== */}
-        {/* HEADER */}
-        {/* ========================================================== */}
+      {/* =================================================
+          CONTENT
+      ================================================= */}
 
-        <header className="mb-16">
-          <p className="mb-4 text-base font-medium italic text-orange-500 sm:text-lg">
-            // good words
-          </p>
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+        {/* =================================================
+            GRID CONTAINER
+        ================================================= */}
 
-          <h2 className="max-w-5xl text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-800 sm:text-4xl md:text-5xl lg:text-[48px]">
-            some good words from people I&apos;ve worked with
-          </h2>
-        </header>
+        <div
+          className="relative shrink-0"
+          style={{
+            width: `${
+              LEFT_CELL_WIDTH +
+              CENTER_CELL_SIZE +
+              RIGHT_CELL_WIDTH +
+              CENTER_GAP * 2
+            }px`,
+            height: `${VIEWPORT_HEIGHT}px`,
+          }}
+        >
+          {/* =================================================
+              GRID FADE MASK
+          ================================================= */}
 
-        {/* ========================================================== */}
-        {/* MAIN */}
-        {/* ========================================================== */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 z-20 h-12"
+            style={{
+              background:
+                "linear-gradient(to bottom, #23222233, rgb(177 177 177 / 0%))",
+            }}
+          />
 
-        <div className="grid items-center gap-16 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-20 xl:grid-cols-[340px_minmax(0,1fr)]">
-          {/* ======================================================== */}
-          {/* IMAGE GRID */}
-          {/* ======================================================== */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-12"
+            style={{
+              background:
+                "linear-gradient(to top, #23222233, rgb(177 177 177 / 0%))",
+            }}
+          />
 
-          <div className="flex justify-center lg:justify-start">
+          {/* =================================================
+              COLUMNS
+          ================================================= */}
+
+          <div
+            className="absolute inset-0 flex items-start justify-center"
+            style={{
+              gap: `${CENTER_GAP}px`,
+            }}
+          >
+            {/* =================================================
+                LEFT COLUMN
+            ================================================= */}
+
             <div
-              className="
-                grid
-                grid-cols-3
-                gap-x-2
-                sm:gap-x-3
-              "
+              className="relative overflow-hidden"
+              style={{
+                width: `${LEFT_CELL_WIDTH}px`,
+                height: `${VIEWPORT_HEIGHT}px`,
+              }}
             >
-              {/* ==================================================== */}
-              {/* LEFT COLUMN */}
-              {/* ==================================================== */}
-
-              <div ref={leftColumnRef} className="flex flex-col gap-2 sm:gap-3">
-                {Array.from({ length: ROWS }).map((_, index) => (
-                  <GridCell key={`left-${index}`} />
+              <div
+                ref={leftColumnRef}
+                className="absolute left-0 top-0 flex flex-col"
+                style={{
+                  gap: `${LEFT_GAP}px`,
+                }}
+              >
+                {LEFT_HEIGHTS.map((height, index) => (
+                  <div
+                    key={`left-cell-${index}`}
+                    className="shrink-0 rounded-[8px] border border-[#e8e5df] bg-[#f7f6f3]"
+                    style={{
+                      width: `${LEFT_CELL_WIDTH}px`,
+                      height: `${height}px`,
+                    }}
+                  />
                 ))}
               </div>
+            </div>
 
-              {/* ==================================================== */}
-              {/* CENTER COLUMN */}
-              {/* ==================================================== */}
+            {/* =================================================
+                CENTER COLUMN
+            ================================================= */}
 
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: `${CENTER_CELL_SIZE}px`,
+                height: `${VIEWPORT_HEIGHT}px`,
+              }}
+            >
               <div
                 ref={centerColumnRef}
-                className="flex flex-col gap-2 sm:gap-3"
+                className="absolute left-0 top-0 flex flex-col"
+                style={{
+                  gap: `${CENTER_GAP}px`,
+                }}
               >
-                {Array.from({ length: ROWS }).map((_, index) => {
-                  const isImageCell = index === 2;
+                {Array.from({
+                  length: ROW_COUNT,
+                }).map((_, index) => {
+                  const imageIndex = IMAGE_ROWS.indexOf(index);
 
-                  if (!isImageCell) {
-                    return <GridCell key={`center-${index}`} />;
-                  }
+                  const hasImage = imageIndex !== -1;
 
                   return (
                     <div
-                      key={`center-image-${activeTestimonial.id}`}
-                      ref={imageCellRef}
-                      className="
-                          relative
-                          h-16
-                          w-16
-                          shrink-0
-                          overflow-hidden
-                          rounded-[10px]
-                          border
-                          border-neutral-200
-                          bg-white
-                          sm:h-20
-                          sm:w-20
-                        "
+                      key={`center-cell-${index}`}
+                      className="relative shrink-0 overflow-hidden rounded-[8px] border border-[#e8e5df] bg-[#f7f6f3]"
+                      style={{
+                        width: `${CENTER_CELL_SIZE}px`,
+                        height: `${CENTER_CELL_SIZE}px`,
+                      }}
                     >
-                      {/* ================================================= */}
-                      {/* IMAGE */}
-                      {/* ================================================= */}
-
-                      <div
-                        ref={imageWrapperRef}
-                        className="absolute inset-0 overflow-hidden rounded-[9px]"
-                      >
+                      {hasImage && (
                         <Image
-                          key={activeTestimonial.id}
-                          src={activeTestimonial.image}
-                          alt={`${activeTestimonial.name} profile`}
+                          src={testimonials[imageIndex].image}
+                          alt={testimonials[imageIndex].name}
                           fill
-                          priority={activeIndex === 0}
-                          sizes="80px"
+                          sizes={`${CENTER_CELL_SIZE}px`}
                           className="object-cover"
+                          priority={imageIndex === 0}
                         />
-                      </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
+            </div>
 
-              {/* ==================================================== */}
-              {/* RIGHT COLUMN */}
-              {/* ==================================================== */}
+            {/* =================================================
+                RIGHT COLUMN
+            ================================================= */}
 
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: `${RIGHT_CELL_WIDTH}px`,
+                height: `${VIEWPORT_HEIGHT}px`,
+              }}
+            >
               <div
                 ref={rightColumnRef}
-                className="flex flex-col gap-2 sm:gap-3"
+                className="absolute left-0 top-0 flex flex-col"
+                style={{
+                  gap: `${RIGHT_GAP}px`,
+                }}
               >
-                {Array.from({ length: ROWS }).map((_, index) => (
-                  <GridCell key={`right-${index}`} />
+                {RIGHT_HEIGHTS.map((height, index) => (
+                  <div
+                    key={`right-cell-${index}`}
+                    className="shrink-0 rounded-[8px] border border-[#e8e5df] bg-[#f7f6f3]"
+                    style={{
+                      width: `${RIGHT_CELL_WIDTH}px`,
+                      height: `${height}px`,
+                    }}
+                  />
                 ))}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* ======================================================== */}
-          {/* TESTIMONIAL CONTENT */}
-          {/* ======================================================== */}
+        {/* =================================================
+            TESTIMONIAL CONTENT
+        ================================================= */}
 
-          <div className="min-w-0">
-            <div ref={contentRef} className="max-w-3xl">
-              {/* ==================================================== */}
-              {/* QUOTE ICON */}
-              {/* ==================================================== */}
+        <div className="flex w-full max-w-xl flex-col">
+          {/* QUOTE ICON */}
 
-              <FaQuoteLeft
-                aria-hidden="true"
-                className="mb-8 h-12 w-12 text-orange-500"
-              />
+          <div className="mb-5">
+            <FaQuoteLeft size={52} className="text-primary" />
+          </div>
 
-              {/* ==================================================== */}
-              {/* QUOTE */}
-              {/* ==================================================== */}
+          {/* QUOTE */}
 
-              <blockquote
-                key={`quote-${activeTestimonial.id}`}
-                className="text-2xl font-medium leading-[1.32] tracking-[-0.03em] text-neutral-800 sm:text-3xl lg:text-[32px]"
-              >
-                {activeTestimonial.text}
-              </blockquote>
+          <div
+            key={activeTestimonial.id}
+            className="animate-[fadeIn_0.5s_ease-in-out]"
+          >
+            <blockquote className="max-w-lg text-2xl font-satoshi leading-[1.2] tracking-tight text-dark-text sm:text-3xl lg:text-[32px]">
+              {activeTestimonial.quote}
+            </blockquote>
 
-              {/* ==================================================== */}
-              {/* AUTHOR */}
-              {/* ==================================================== */}
+            {/* AUTHOR */}
 
-              <div key={`author-${activeTestimonial.id}`} className="mt-8">
-                <p className="text-base font-medium text-neutral-600">
-                  {activeTestimonial.name}
-                </p>
+            <div className="mt-7">
+              <p className="text-sm font-medium text-neutral-900">
+                {activeTestimonial.name}
+              </p>
 
-                <p className="mt-1 text-sm text-neutral-500">
-                  {activeTestimonial.role}, {activeTestimonial.company}
-                </p>
-              </div>
+              <p className="mt-1 text-xs text-neutral-500">
+                {activeTestimonial.role}
+              </p>
             </div>
+          </div>
 
-            {/* ====================================================== */}
-            {/* NAVIGATION */}
-            {/* ====================================================== */}
+          {/* =================================================
+              CONTROLS
+          ================================================= */}
 
-            <div className="mt-8 flex items-center gap-3">
-              {/* ==================================================== */}
-              {/* PREVIOUS */}
-              {/* ==================================================== */}
+          <div className="mt-8 flex items-center gap-2">
+            {/* PREVIOUS */}
 
-              <button
-                type="button"
-                aria-label="Previous testimonial"
-                onClick={() => changeTestimonial("prev")}
-                className="
-                  group
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-neutral-200
-                  bg-white
-                  transition-all
-                  duration-300
-                  hover:border-orange-300
-                  hover:bg-orange-50
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-orange-400
-                  focus:ring-offset-2
-                "
-              >
-                <FaArrowLeft
-                  className="
-                    h-4
-                    w-4
-                    text-orange-300
-                    transition-transform
-                    duration-300
-                    group-hover:-translate-x-0.5
-                  "
-                />
-              </button>
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              aria-disabled={!canGoPrevious}
+              disabled={!canGoPrevious}
+              onClick={() => handleNavigation("previous")}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-neutral-700 transition-all duration-300 text-primary hover:border-primary disabled:pointer-events-none disabled:opacity-35"
+            >
+              <FaArrowLeft />
+            </button>
 
-              {/* ==================================================== */}
-              {/* NEXT */}
-              {/* ==================================================== */}
+            {/* NEXT */}
 
-              <button
-                type="button"
-                aria-label="Next testimonial"
-                onClick={() => changeTestimonial("next")}
-                className="
-                  group
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-neutral-200
-                  bg-white
-                  transition-all
-                  duration-300
-                  hover:border-orange-300
-                  hover:bg-orange-50
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-orange-400
-                  focus:ring-offset-2
-                "
-              >
-                <FaArrowRight
-                  className="
-                    h-4
-                    w-4
-                    text-orange-500
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-0.5
-                  "
-                />
-              </button>
-            </div>
+            <button
+              type="button"
+              aria-label="Next testimonial"
+              aria-disabled={!canGoNext}
+              disabled={!canGoNext}
+              onClick={() => handleNavigation("next")}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-neutral-700 transition-all duration-300 text-primary hover:border-primary disabled:pointer-events-none disabled:opacity-35"
+            >
+              <FaArrowRight />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* =================================================
+          ANIMATION
+      ================================================= */}
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (max-width: 1023px) {
+          /* Keep the grid and content comfortably sized on mobile. */
+        }
+      `}</style>
     </section>
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| Decorative Grid Cell
-|--------------------------------------------------------------------------
-*/
-
-function GridCell() {
-  return (
-    <div
-      aria-hidden="true"
-      className="
-        h-16
-        w-16
-        shrink-0
-        rounded-[10px]
-        border
-        border-neutral-200/70
-        bg-white/20
-        sm:h-20
-        sm:w-20
-      "
-    />
   );
 }
