@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
+
 import {
   FaAngular,
   FaCloudflare,
@@ -13,6 +14,7 @@ import {
   FaReact,
   FaVuejs,
 } from "react-icons/fa6";
+
 import {
   SiDjango,
   SiFramer,
@@ -26,16 +28,20 @@ import {
 
 const CONTRIBUTION_COLS = 30;
 const CONTRIBUTION_ROWS = 6;
+
 const FIRST_CONTRIBUTION_DATE = new Date("2026-01-05T00:00:00");
 
 const contributionCells = Array.from(
-  { length: CONTRIBUTION_COLS * CONTRIBUTION_ROWS },
+  {
+    length: CONTRIBUTION_COLS * CONTRIBUTION_ROWS,
+  },
   (_, index) => {
     const seed = (index * 5 + Math.floor(index / CONTRIBUTION_COLS) * 23) % 11;
 
     if (seed <= 2) return 0;
     if (seed <= 5) return 1;
     if (seed <= 8) return 2;
+
     return 3;
   },
 );
@@ -74,10 +80,13 @@ interface HoveredCell {
   index: number;
   contributions: number;
   date: string;
+  x: number;
+  y: number;
 }
 
-const getContributionDate = (index: number) => {
+const getContributionDate = (index: number): string => {
   const date = new Date(FIRST_CONTRIBUTION_DATE);
+
   date.setDate(date.getDate() + index);
 
   return new Intl.DateTimeFormat("en", {
@@ -88,18 +97,25 @@ const getContributionDate = (index: number) => {
 
 const Grid = () => {
   const cardRef = useRef<HTMLElement>(null);
+
   const trackRefs = useRef<HTMLDivElement[]>([]);
+
   const [hoveredCell, setHoveredCell] = useState<HoveredCell | null>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       trackRefs.current.forEach((track, index) => {
+        if (!track) return;
+
         const distance = track.scrollWidth / 2;
+
         const isReverse = index % 2 === 1;
 
         gsap.fromTo(
           track,
-          { x: isReverse ? -distance : 0 },
+          {
+            x: isReverse ? -distance : 0,
+          },
           {
             x: isReverse ? 0 : -distance,
             duration: distance / 22,
@@ -111,7 +127,9 @@ const Grid = () => {
       });
     }, cardRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -119,16 +137,20 @@ const Grid = () => {
       ref={cardRef}
       className="rounded-2xl border border-light-border bg-light shadow-lg"
     >
-      <div className="px-5 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-7">
+      {/* Contribution Section */}
+      <div className="px-5 pb-6 pt-6 sm:px-8 sm:pb-7 sm:pt-8">
+        {/* Username */}
         <div className="font-satoshi text-[16px] font-bold text-dark-text sm:text-[18px]">
           @mehtab_ali
         </div>
+
+        {/* Description */}
         <p className="mb-7 font-satoshi text-[12px] text-secondary sm:text-[14px]">
           879 contributions in the template timeline
         </p>
 
+        {/* Contribution Grid */}
         <div className="relative w-full pb-8">
-          {/* SCROLLING AREA */}
           <div className="overflow-x-hidden">
             <div
               className="relative grid min-w-[680px] gap-1.5"
@@ -139,46 +161,46 @@ const Grid = () => {
               {contributionCells.map((level, index) => (
                 <div
                   key={index}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
+                  onMouseEnter={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
 
                     setHoveredCell({
                       index,
                       contributions: Math.floor(Math.random() * 18),
                       date: getContributionDate(index),
-
-                      // Position relative to viewport
                       x: rect.left + rect.width / 2,
                       y: rect.top,
                     });
                   }}
-                  onMouseLeave={() => setHoveredCell(null)}
+                  onMouseLeave={() => {
+                    setHoveredCell(null);
+                  }}
                   className={`relative aspect-square rounded-[3px] transition-transform duration-150 hover:z-20 hover:scale-110 ${contributionColors[level]}`}
                 />
               ))}
             </div>
           </div>
 
-          {/* TOOLTIP IS OUTSIDE THE SCROLL CONTAINER */}
+          {/* Tooltip */}
           {hoveredCell && (
             <div
               className="
-        pointer-events-none
-        fixed
-        z-[9999]
-        w-max
-        -translate-x-1/2
-        -translate-y-full
-        rounded-md
-        bg-[#77777c]
-        px-3
-        py-2
-        font-satoshi
-        text-[12px]
-        font-bold
-        text-light
-        shadow-lg
-      "
+                pointer-events-none
+                fixed
+                z-[9999]
+                w-max
+                -translate-x-1/2
+                -translate-y-full
+                rounded-md
+                bg-[#77777c]
+                px-3
+                py-2
+                font-satoshi
+                text-[12px]
+                font-bold
+                text-light
+                shadow-lg
+              "
               style={{
                 left: hoveredCell.x,
                 top: hoveredCell.y - 10,
@@ -189,25 +211,26 @@ const Grid = () => {
                 ? "contribution"
                 : "contributions"}{" "}
               on {hoveredCell.date}
-              {/* Arrow */}
+              {/* Tooltip Arrow */}
               <span
                 className="
-          absolute
-          left-1/2
-          top-full
-          h-2
-          w-2
-          -translate-x-1/2
-          -translate-y-1/2
-          rotate-45
-          bg-[#77777c]
-        "
+                  absolute
+                  left-1/2
+                  top-full
+                  h-2
+                  w-2
+                  -translate-x-1/2
+                  -translate-y-1/2
+                  rotate-45
+                  bg-[#77777c]
+                "
               />
             </div>
           )}
         </div>
       </div>
 
+      {/* Technology Icons */}
       <div className="border-t border-light-border py-6">
         <div
           className="space-y-5 overflow-hidden"
@@ -222,7 +245,9 @@ const Grid = () => {
             <div key={rowIndex} className="flex overflow-hidden">
               <div
                 ref={(node) => {
-                  if (node) trackRefs.current[rowIndex] = node;
+                  if (node) {
+                    trackRefs.current[rowIndex] = node;
+                  }
                 }}
                 className="flex min-w-max will-change-transform"
               >
@@ -235,7 +260,26 @@ const Grid = () => {
                     {row.map((Icon, iconIndex) => (
                       <div
                         key={`${copyIndex}-${rowIndex}-${iconIndex}`}
-                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-light-box text-dark-text opacity-80 shadow-sm grayscale-[0.2] transition-all duration-300 hover:opacity-100 hover:grayscale-0 sm:h-16 sm:w-16"
+                        className="
+                          flex
+                          h-14
+                          w-14
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-lg
+                          bg-light-box
+                          text-dark-text
+                          opacity-80
+                          shadow-sm
+                          grayscale-[0.2]
+                          transition-all
+                          duration-300
+                          hover:opacity-100
+                          hover:grayscale-0
+                          sm:h-16
+                          sm:w-16
+                        "
                       >
                         <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
                       </div>
