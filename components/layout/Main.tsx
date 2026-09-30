@@ -9,22 +9,45 @@ import HowItWorks from "@/features/LandingPageUI/HowItWorks/HowItWorks";
 import Service from "@/features/LandingPageUI/Service/Service";
 import UserReview from "@/features/LandingPageUI/UserReview/UserReview";
 import React from "react";
-import HangingCard from "@/components/common/HangingCard";
+import ScrollReveal from "@/components/common/ScrollReveal";
+import SmoothScroll from "@/components/common/SmoothScroll";
 function Main() {
   return (
-    <div className="mx-auto h-min w-full max-w-[980px] px-4  md:px-6 md:pb-0 lg:px-0">
-      <HeroSection />
+    <SmoothScroll>
+      <div className="relative mx-auto h-min w-full max-w-[980px] px-4 md:px-6 md:pb-0 lg:px-0">
+      <ScrollReveal>
+        <HeroSection />
+      </ScrollReveal>
 
-      <AboutMe />
-      <FeaturedWorks />
-      <Experience />
-      <ExperienceTimeline />
-      <Service />
-      <ChooseService />
-      <UserReview />
-      <HowItWorks />
-      <Footer footerInDetail={false} />
-    </div>
+      <ScrollReveal>
+        <AboutMe />
+      </ScrollReveal>
+      <ScrollReveal>
+        <FeaturedWorks />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Experience />
+      </ScrollReveal>
+      <ScrollReveal>
+        <ExperienceTimeline />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Service />
+      </ScrollReveal>
+      <ScrollReveal>
+        <ChooseService />
+      </ScrollReveal>
+      <ScrollReveal>
+        <UserReview />
+      </ScrollReveal>
+      <ScrollReveal>
+        <HowItWorks />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Footer footerInDetail={false} />
+      </ScrollReveal>
+      </div>
+    </SmoothScroll>
   );
 }
 

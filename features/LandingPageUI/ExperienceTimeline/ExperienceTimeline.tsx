@@ -65,8 +65,6 @@ const experiences = [
 const ExperienceTimeline = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const itemsRef = useRef<HTMLElement[]>([]);
-  const numbersRef = useRef<HTMLDivElement[]>([]);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -87,82 +85,11 @@ const ExperienceTimeline = () => {
           trigger: section,
           start: "top 90%",
           end: "bottom 95%",
-          scrub: 1.21,
+          scrub: 0.7,
+          invalidateOnRefresh: true,
         },
       });
 
-      itemsRef.current.forEach((item, index) => {
-        const number = numbersRef.current[index];
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: item,
-            start: "top 80%",
-            end: "bottom 30%",
-            scrub: 1.2,
-          },
-        });
-
-        timeline.fromTo(
-          item,
-          {
-            opacity: 0,
-            y: 8,
-            filter: "blur(1px)",
-          },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.5,
-            ease: "power3.out",
-          },
-        );
-
-        timeline.to(item, {
-          opacity: 0,
-          y: -24,
-          filter: "blur(2px)",
-          duration: 0.34,
-          ease: "power2.in",
-        });
-
-        if (number) {
-          gsap
-            .timeline({
-              scrollTrigger: {
-                trigger: item,
-                start: "top 95%",
-                end: "top 2%",
-                scrub: 1.15,
-              },
-            })
-            .fromTo(
-              number,
-              { color: "#7a7a7a", opacity: 0.8, scale: 0.94 },
-              {
-                color: "#ff5c00",
-                opacity: 1,
-                scale: 1.06,
-                duration: 0.2,
-                ease: "power2.out",
-              },
-            )
-            .to(number, {
-              color: "#ff5c00",
-              opacity: 1,
-              scale: 1.06,
-              duration: 0.32,
-              ease: "none",
-            })
-            .to(number, {
-              color: "#7a7a7a",
-              opacity: 0.45,
-              scale: 0.94,
-              duration: 0.34,
-              ease: "power2.in",
-            });
-        }
-      });
     }, section);
 
     return () => ctx.revert();
@@ -192,19 +119,13 @@ const ExperienceTimeline = () => {
         </div>
 
         <div className="flex flex-col">
-          {experiences.map((experience, index) => (
+          {experiences.map((experience) => (
             <article
               key={experience.number}
-              ref={(element) => {
-                if (element) itemsRef.current[index] = element;
-              }}
-              className="grid min-h-[var(--timeline-row)] grid-cols-[58px_1fr] gap-4 opacity-0 sm:grid-cols-[88px_1fr] sm:gap-12"
+              className="grid min-h-[var(--timeline-row)] grid-cols-[58px_1fr] gap-4 sm:grid-cols-[88px_1fr] sm:gap-12"
             >
               <div className="relative z-10 pt-4">
                 <div
-                  ref={(element) => {
-                    if (element) numbersRef.current[index] = element;
-                  }}
                   className="flex h-10 w-12 items-center justify-center rounded-lg border border-light-border bg-light-box font-satoshi text-[22px] font-medium italic leading-none text-dark-text sm:w-[68px] sm:text-[28px]"
                 >
                   {experience.number}

@@ -6,16 +6,12 @@ function page() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <div
-        className="pointer-events-none fixed inset-0 -z-10"
+        className="pointer-events-none fixed inset-0 z-0 [background-size:22px_22px] opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(circle, var(--color-dot) 0.1px, transparent 1px)",
-          backgroundSize: "25px 25px",
-          maskImage:
-            "radial-gradient(ellipse at center, transparent 0%, transparent 30%, black 80%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse at center, transparent 0%, transparent 30%, black 80%)",
+            "radial-gradient(circle, var(--color-dot) 0.75px, transparent 0.75px)",
         }}
+        aria-hidden="true"
       />
       <div
         className="
@@ -27,7 +23,14 @@ function page() {
     [-webkit-mask-image:linear-gradient(to_top,transparent_0%,#3d4448_50%,black_100%]
   "
       />
-
+      <div
+        className="pointer-events-none absolute inset-0 [background-size:22px_22px] opacity-60"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, var(--color-dot) 0.75px, transparent 0.75px)",
+        }}
+        aria-hidden="true"
+      />
       {/* Bottom blur */}
       <div
         className="

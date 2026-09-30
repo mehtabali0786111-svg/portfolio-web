@@ -63,13 +63,27 @@
    `dark` class therefore updates existing Tailwind classes across every route. */
 html {
   background: var(--color-light);
-  scroll-behavior: smooth;
 }
 
 body {
   background: var(--color-light);
   color: var(--color-dark-text);
-  transition: background-color 220ms ease, color 220ms ease;
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.smooth-scroll-wrapper {
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.smooth-scroll-content {
+  width: 100%;
+  overflow: visible;
 }
 
 html.dark {
@@ -117,7 +131,7 @@ html.dark [class~="text-neutral-800"] {
 
 html.dark [class~="text-neutral-700"],
 html.dark [class~="text-neutral-600"] {
-  color: #d0ceca;
+  color: #131313;
 }
 
 html.dark [class~="text-neutral-500"],

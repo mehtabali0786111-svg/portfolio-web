@@ -72,7 +72,6 @@ const testimonials: Testimonial[] = [
 
 const CENTER_CELL_SIZE = 76;
 const CENTER_GAP = 8;
-
 const ROW_COUNT = 11;
 
 const IMAGE_ROWS = [2, 4, 6, 8, 10];
@@ -84,27 +83,23 @@ const CENTER_TRACK_HEIGHT =
 
 // =======================================================
 // LEFT COLUMN
-// All cells are >= CENTER_CELL_SIZE
 // =======================================================
 
-const LEFT_CELL_WIDTH = 76;
-
+const LEFT_CELL_WIDTH = 82;
 const LEFT_GAP = 8;
 
-const LEFT_HEIGHTS = [88, 108, 76, 94, 82, 116, 78, 104, 86];
+const LEFT_HEIGHTS = [110, 135, 100, 120, 105, 145, 102, 130, 112];
 
 const LEFT_ROW_COUNT = LEFT_HEIGHTS.length;
 
 // =======================================================
 // RIGHT COLUMN
-// All cells are >= CENTER_CELL_SIZE
 // =======================================================
 
-const RIGHT_CELL_WIDTH = 76;
-
+const RIGHT_CELL_WIDTH = 82;
 const RIGHT_GAP = 8;
 
-const RIGHT_HEIGHTS = [106, 78, 112, 86, 120, 76, 98, 84, 110, 80, 104];
+const RIGHT_HEIGHTS = [118, 92, 128, 100, 136, 90, 112, 98, 124, 94, 116];
 
 const RIGHT_ROW_COUNT = RIGHT_HEIGHTS.length;
 
@@ -112,21 +107,14 @@ const RIGHT_ROW_COUNT = RIGHT_HEIGHTS.length;
 // VIEWPORT
 // =======================================================
 
-const VIEWPORT_HEIGHT = CENTER_CELL_SIZE + CENTER_STEP;
+const VIEWPORT_HEIGHT = CENTER_CELL_SIZE + CENTER_STEP + 90;
 
-// Center of the visible grid
 const VIEWPORT_CENTER = VIEWPORT_HEIGHT / 2;
 
 // =======================================================
 // ALIGNMENT HELPERS
 // =======================================================
 
-/**
- * Calculates the Y position required to place
- * the selected cell's center at the viewport center.
- *
- * Supports irregular cell heights.
- */
 const getIrregularMiddleAlignedY = (
   heights: number[],
   gap: number,
@@ -169,7 +157,6 @@ const RIGHT_BASE_Y = getIrregularMiddleAlignedY(
   RIGHT_MIDDLE_INDEX,
 );
 
-// Center base alignment
 const CENTER_BASE_Y =
   VIEWPORT_CENTER - CENTER_MIDDLE_INDEX * CENTER_STEP - CENTER_CELL_SIZE / 2;
 
@@ -234,7 +221,6 @@ export default function TestimonialGrid() {
 
       const oppositeMovement = centerMovementDirection === -1 ? 1 : -1;
 
-      // Side columns move outward during the transition.
       const sideTravel = CENTER_STEP * 3;
 
       const leftStartY = LEFT_BASE_Y + oppositeMovement * sideTravel;
@@ -388,7 +374,6 @@ export default function TestimonialGrid() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Don't intercept arrow keys while typing in a form.
       const target = event.target as HTMLElement | null;
 
       const isTyping =
@@ -441,9 +426,14 @@ export default function TestimonialGrid() {
 
   return (
     <section className="border-x border-b border-light-border px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32">
+      {/* =================================================
+          HEADING
+      ================================================= */}
+
       <h4 className="mb-1 font-satoshi text-[18px] italic text-primary sm:text-[22px]">
         {"// Featured works"}
       </h4>
+
       <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
         These are ones that taught me the most
       </h3>
@@ -464,30 +454,28 @@ export default function TestimonialGrid() {
               LEFT_CELL_WIDTH +
               CENTER_CELL_SIZE +
               RIGHT_CELL_WIDTH +
-              CENTER_GAP * 2
+              CENTER_GAP * 6
             }px`,
             height: `${VIEWPORT_HEIGHT}px`,
           }}
         >
           {/* =================================================
-              GRID FADE MASK
+              SOFT EDGE FADE
+
+              This is NOT a radial gradient.
+
+              The mask makes the actual moving cells
+              gradually disappear near the viewport edges.
           ================================================= */}
 
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-20 h-12"
+            className="pointer-events-none absolute inset-0 z-20"
             style={{
-              background:
-                "linear-gradient(to bottom, #23222233, rgb(177 177 177 / 0%))",
-            }}
-          />
-
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-12"
-            style={{
-              background:
-                "linear-gradient(to top, #23222233, rgb(177 177 177 / 0%))",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, black 13%, black 80%, transparent 100%)",
+              maskImage:
+                "linear-gradient(to bottom, transparent 0%, black 13%, black 80%, transparent 100%)",
             }}
           />
 
@@ -496,7 +484,7 @@ export default function TestimonialGrid() {
           ================================================= */}
 
           <div
-            className="absolute inset-0 flex items-start justify-center"
+            className="absolute inset-0 z-[1] flex items-start justify-center"
             style={{
               gap: `${CENTER_GAP}px`,
             }}
@@ -510,6 +498,12 @@ export default function TestimonialGrid() {
               style={{
                 width: `${LEFT_CELL_WIDTH}px`,
                 height: `${VIEWPORT_HEIGHT}px`,
+
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
+
+                maskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
               }}
             >
               <div
@@ -541,6 +535,12 @@ export default function TestimonialGrid() {
               style={{
                 width: `${CENTER_CELL_SIZE}px`,
                 height: `${VIEWPORT_HEIGHT}px`,
+
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
+
+                maskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
               }}
             >
               <div
@@ -591,6 +591,12 @@ export default function TestimonialGrid() {
               style={{
                 width: `${RIGHT_CELL_WIDTH}px`,
                 height: `${VIEWPORT_HEIGHT}px`,
+
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
+
+                maskImage:
+                  "linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%)",
               }}
             >
               <div
@@ -620,13 +626,9 @@ export default function TestimonialGrid() {
         ================================================= */}
 
         <div className="flex w-full max-w-xl flex-col">
-          {/* QUOTE ICON */}
-
           <div className="mb-5">
             <FaQuoteLeft size={52} className="text-primary" />
           </div>
-
-          {/* QUOTE */}
 
           <div
             key={activeTestimonial.id}
@@ -635,8 +637,6 @@ export default function TestimonialGrid() {
             <blockquote className="max-w-lg text-2xl font-satoshi leading-[1.2] tracking-tight text-dark-text sm:text-3xl lg:text-[32px]">
               {activeTestimonial.quote}
             </blockquote>
-
-            {/* AUTHOR */}
 
             <div className="mt-7">
               <p className="text-sm font-medium text-neutral-900">
@@ -654,20 +654,16 @@ export default function TestimonialGrid() {
           ================================================= */}
 
           <div className="mt-8 flex items-center gap-2">
-            {/* PREVIOUS */}
-
             <button
               type="button"
               aria-label="Previous testimonial"
               aria-disabled={!canGoPrevious}
               disabled={!canGoPrevious}
               onClick={() => handleNavigation("previous")}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-neutral-700 transition-all duration-300 text-primary hover:border-primary disabled:pointer-events-none disabled:opacity-35"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-primary transition-all duration-300 hover:border-primary disabled:pointer-events-none disabled:opacity-35"
             >
               <FaArrowLeft />
             </button>
-
-            {/* NEXT */}
 
             <button
               type="button"
@@ -675,7 +671,7 @@ export default function TestimonialGrid() {
               aria-disabled={!canGoNext}
               disabled={!canGoNext}
               onClick={() => handleNavigation("next")}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-neutral-700 transition-all duration-300 text-primary hover:border-primary disabled:pointer-events-none disabled:opacity-35"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dedbd5] text-sm text-primary transition-all duration-300 hover:border-primary disabled:pointer-events-none disabled:opacity-35"
             >
               <FaArrowRight />
             </button>
@@ -683,9 +679,9 @@ export default function TestimonialGrid() {
         </div>
       </div>
 
-      {/* =================================================
+      {/* =====================================================
           ANIMATION
-      ================================================= */}
+      ===================================================== */}
 
       <style jsx>{`
         @keyframes fadeIn {

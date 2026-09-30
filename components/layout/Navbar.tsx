@@ -76,7 +76,7 @@ function Navbar() {
   return (
     <nav
       aria-label="Page navigation"
-      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-light-border bg-light/95 p-2 shadow-lg backdrop-blur md:left-6 md:top-1/2 md:bottom-auto md:-translate-x-0 md:-translate-y-1/2"
+      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-light-border bg-light/95 py-1.5 pl-2 shadow-lg backdrop-blur md:left-6 md:top-1/2 md:bottom-auto md:-translate-x-0 md:-translate-y-1/2"
     >
       <div className="group flex gap-1 overflow-hidden md:w-10 md:flex-col md:hover:w-30">
         {navItems.map(({ icon: Icon, label, target }) => {

@@ -53,6 +53,8 @@ import { featuredWorks } from "@/features/LandingPageUI/FeaturedWorks/featuredWo
 import { TiTick } from "react-icons/ti";
 import { MdOutlineCheck } from "react-icons/md";
 import Footer from "@/features/LandingPageUI/Footer.tsx/Footer";
+import ScrollReveal from "@/components/common/ScrollReveal";
+import SmoothScroll from "@/components/common/SmoothScroll";
 const [leadWork, ...supportingWorks] = featuredWorks;
 
 const fredoka = Fredoka({
@@ -94,6 +96,7 @@ export default function WorkDetail() {
 
       {/* `relative` scopes the absolutely-positioned dot-grid background to
           this element instead of the nearest positioned ancestor. */}
+      <SmoothScroll>
       <main className="relative ">
         {/* dot-grid background */}
         <div
@@ -116,67 +119,75 @@ export default function WorkDetail() {
             "cut off" with a gap. */}
         <div className="relative mx-auto max-w-[960px] border-x border-light-border flow-root">
           <div className="px-8">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-light-theme-text transition-colors hover:text-neutral-600 mt-20 "
-            >
-              <div className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-light-box ">
-                <ArrowLeft className="h-3.5 w-3.5 " />
-              </div>
+            <ScrollReveal>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-sm text-light-theme-text transition-colors hover:text-neutral-600 mt-20 "
+              >
+                <div className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-light-box ">
+                  <ArrowLeft className="h-3.5 w-3.5 " />
+                </div>
 
-              <span>Back to home</span>
-            </Link>
+                <span>Back to home</span>
+              </Link>
+            </ScrollReveal>
 
             {/* headline */}
-            <h1 className="mx-auto mt-6 max-w-3xl text-center font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.15] text-neutral-900 sm:text-[42px]">
-              Building a Perfect Design System from Zero
-            </h1>
+            <ScrollReveal>
+              <h1 className="mx-auto mt-6 max-w-3xl text-center font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.15] text-neutral-900 sm:text-[42px]">
+                Building a Perfect Design System from Zero
+              </h1>
+            </ScrollReveal>
 
             {/* hero card */}
-            <div className="mt-10 overflow-hidden rounded-[28px] border border-light-border bg-light shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-              <Image
-                src="/images/lumio.jpg"
-                width={872}
-                height={588}
-                alt="image"
-                className="aspect-auto object-cover"
-              />
-            </div>
+            <ScrollReveal>
+              <div className="mt-10 overflow-hidden rounded-[28px] border border-light-border bg-light shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+                <Image
+                  src="/images/lumio.jpg"
+                  width={872}
+                  height={588}
+                  alt="image"
+                  className="aspect-auto object-cover"
+                />
+              </div>
+            </ScrollReveal>
 
             {/* meta grid */}
-            <div className="mt-12 grid grid-cols-1 gap-x-16 gap-y-7 max-w-[600px] mx-auto sm:grid-cols-2">
-              <MetaItem
-                icon={<Layers className="h-[28px] w-[28px]" />}
-                label="Organization"
-                value="Lumio"
-              />
-              <MetaItem
-                icon={<CircleUserRound className="h-[28px] w-[28px]" />}
-                label="Role"
-                value="Designer"
-              />
-              <MetaItem
-                icon={<CalendarDays className="h-[28px] w-[28px]" />}
-                label="Duration"
-                value="6 Months"
-              />
-              <MetaItem
-                icon={<Wrench className="h-[28px] w-[28px]" />}
-                label="Tools & Technologies"
-                value={
-                  <div className="mt-1 flex flex-wrap gap-1.5">
-                    {["Figma", "Sketch", "Illustrator"].map((tool) => (
-                      <span
-                        key={tool}
-                        className="rounded-full bg-light-box px-2.5 py-1 text-xs font-normal text-secondary"
-                      >
-                        {tool}
-                      </span>
-                    ))}
-                  </div>
-                }
-              />
-            </div>
+            <ScrollReveal>
+              <div className="mt-12 grid grid-cols-1 gap-x-16 gap-y-7 max-w-[600px] mx-auto sm:grid-cols-2">
+                <MetaItem
+                  icon={<Layers className="h-[28px] w-[28px]" />}
+                  label="Organization"
+                  value="Lumio"
+                />
+                <MetaItem
+                  icon={<CircleUserRound className="h-[28px] w-[28px]" />}
+                  label="Role"
+                  value="Designer"
+                />
+                <MetaItem
+                  icon={<CalendarDays className="h-[28px] w-[28px]" />}
+                  label="Duration"
+                  value="6 Months"
+                />
+                <MetaItem
+                  icon={<Wrench className="h-[28px] w-[28px]" />}
+                  label="Tools & Technologies"
+                  value={
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {["Figma", "Sketch", "Illustrator"].map((tool) => (
+                        <span
+                          key={tool}
+                          className="rounded-full bg-light-box px-2.5 py-1 text-xs font-normal text-secondary"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  }
+                />
+              </div>
+            </ScrollReveal>
 
             {/* Problem */}
             <Section title="Problem" className="mt-14 max-w-[600px] mx-auto">
@@ -189,20 +200,22 @@ export default function WorkDetail() {
             </Section>
 
             {/* before comparison screenshots */}
-            <div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Image
-                src="/images/workflow1.jpg"
-                width={880}
-                height={700}
-                alt="image"
-              />
-              <Image
-                src="/images/workflow2.jpg"
-                width={880}
-                height={700}
-                alt="image"
-              />
-            </div>
+            <ScrollReveal>
+              <div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Image
+                  src="/images/workflow1.jpg"
+                  width={880}
+                  height={700}
+                  alt="image"
+                />
+                <Image
+                  src="/images/workflow2.jpg"
+                  width={880}
+                  height={700}
+                  alt="image"
+                />
+              </div>
+            </ScrollReveal>
             {/* My role */}
             <Section title="My role" className="mt-16 max-w-[600px] mx-auto">
               <p className="text-light-theme-text font-satoshi">
@@ -277,12 +290,14 @@ export default function WorkDetail() {
               </p>
             </Section>
 
-            <Image
-              src="/images/dashboard.jpg"
-              width={880}
-              height={700}
-              alt="image"
-            />
+            <ScrollReveal>
+              <Image
+                src="/images/dashboard.jpg"
+                width={880}
+                height={700}
+                alt="image"
+              />
+            </ScrollReveal>
 
             {/* What shipped */}
             <Section
@@ -346,28 +361,33 @@ export default function WorkDetail() {
           {/* next project — border-x removed here; the outer wrapper's
               border-x already runs continuously behind this section, so
               only the border-t divider line is needed. */}
-          <section className="px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32 border-t border-light-border">
-            <h4 className="mb-1 font-satoshi  text-[18px] italic text-primary sm:text-[22px]">
-              {"// Other works"}
-            </h4>
-            <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
-              Have a look at my other work
-            </h3>
+          <ScrollReveal>
+            <section className="px-5 py-20 sm:px-8 sm:py-24 lg:px-16 lg:py-32 border-t border-light-border">
+              <h4 className="mb-1 font-satoshi  text-[18px] italic text-primary sm:text-[22px]">
+                {"// Other works"}
+              </h4>
+              <h3 className="mb-8 font-satoshi text-[28px] font-bold leading-tight text-[#3d3d3d] sm:text-[36px] sm:text-justify">
+                Have a look at my other work
+              </h3>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {supportingWorks.slice(0, 2).map((work) => (
-                  <Link key={work.id} href="/workdetail">
-                    <WorkCard work={work} />
-                  </Link>
-                ))}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {supportingWorks.slice(0, 2).map((work) => (
+                    <Link key={work.id} href="/workdetail">
+                      <WorkCard work={work} />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </ScrollReveal>
 
-          <Footer footerInDetail={true} />
+          <ScrollReveal>
+            <Footer footerInDetail={true} />
+          </ScrollReveal>
         </div>
       </main>
+      </SmoothScroll>
     </>
   );
 }
@@ -410,18 +430,20 @@ function Section({
   italicTitle?: boolean;
 }) {
   return (
-    <section className={className}>
-      <h3
-        className={`font-satoshi text-[20px] font-semibold text-primary italic ${
-          italicTitle ? "italic" : ""
-        }`}
-      >
-        {title}
-      </h3>
-      <div className="mt-2.5 space-y-4 text-[16px] leading-relaxed text-light-theme-text mb-6">
-        {children}
-      </div>
-    </section>
+    <ScrollReveal>
+      <section className={className}>
+        <h3
+          className={`font-satoshi text-[20px] font-semibold text-primary italic ${
+            italicTitle ? "italic" : ""
+          }`}
+        >
+          {title}
+        </h3>
+        <div className="mt-2.5 space-y-4 text-[16px] leading-relaxed text-light-theme-text mb-6">
+          {children}
+        </div>
+      </section>
+    </ScrollReveal>
   );
 }
 
