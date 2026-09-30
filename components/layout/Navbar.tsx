@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "gsap";
 import { CiBadgeDollar } from "react-icons/ci";
 import { GoPerson } from "react-icons/go";
 import {
@@ -19,6 +22,8 @@ const navItems = [
 
 const THEME_KEY = "portfolio-theme";
 
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
 function Navbar() {
   const [activeSection, setActiveSection] = useState("about");
   const [isDark, setIsDark] = useState(false);
@@ -35,34 +40,37 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    let frame = 0;
-    const updateActiveSection = () => {
-      frame = 0;
-      const triggerLine = window.innerHeight * 0.38;
-      const visibleItem = [...navItems].reverse().find(({ target }) => {
-        const section = document.getElementById(target);
-        return section && section.getBoundingClientRect().top <= triggerLine;
-      });
-      setActiveSection(visibleItem?.target ?? navItems[0].target);
-    };
-    const scheduleUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateActiveSection);
-    };
+    const triggers = navItems.flatMap(({ target }) => {
+      const section = document.getElementById(target);
+      if (!section) return [];
 
-    updateActiveSection();
-    window.addEventListener("scroll", scheduleUpdate, { passive: true });
-    window.addEventListener("resize", scheduleUpdate);
-    return () => {
-      window.removeEventListener("scroll", scheduleUpdate);
-      window.removeEventListener("resize", scheduleUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
+      return [
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 38%",
+          end: "bottom 38%",
+          onEnter: () => setActiveSection(target),
+          onEnterBack: () => setActiveSection(target),
+        }),
+      ];
+    });
+
+    ScrollTrigger.refresh();
+    return () => triggers.forEach((trigger) => trigger.kill());
   }, []);
 
   const scrollToSection = useCallback((target: string) => {
-    document
-      .getElementById(target)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const section = document.getElementById(target);
+    if (!section) return;
+
+    const smoother = ScrollSmoother.get();
+    if (smoother) {
+      smoother.scrollTo(section, true, "top 32px");
+    } else {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    setActiveSection(target);
     window.history.replaceState(null, "", `#${target}`);
   }, []);
 
