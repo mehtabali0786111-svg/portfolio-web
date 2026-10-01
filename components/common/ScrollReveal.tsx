@@ -43,6 +43,7 @@ export default function ScrollReveal({
 
       const observer = new IntersectionObserver(
         (entries) => {
+          console.log(entries);
           entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
 

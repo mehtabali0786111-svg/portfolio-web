@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 
 import {
@@ -151,7 +152,7 @@ const Grid = () => {
 
         {/* Contribution Grid */}
         <div className="relative w-full pb-8">
-          <div className="overflow-x-hidden">
+          <div className="overflow-hidden">
             <div
               className="relative grid min-w-[680px] gap-1.5"
               style={{
@@ -182,51 +183,25 @@ const Grid = () => {
           </div>
 
           {/* Tooltip */}
-          {hoveredCell && (
-            <div
-              className="
-                pointer-events-none
-                fixed
-                z-[9999]
-                w-max
-                -translate-x-1/2
-                -translate-y-full
-                rounded-md
-                bg-[#77777c]
-                px-3
-                py-2
-                font-satoshi
-                text-[12px]
-                font-bold
-                text-light
-                shadow-lg
-              "
-              style={{
-                left: hoveredCell.x,
-                top: hoveredCell.y - 10,
-              }}
-            >
-              {hoveredCell.contributions}{" "}
-              {hoveredCell.contributions === 1
-                ? "contribution"
-                : "contributions"}{" "}
-              on {hoveredCell.date}
-              {/* Tooltip Arrow */}
-              <span
-                className="
-                  absolute
-                  left-1/2
-                  top-full
-                  h-2
-                  w-2
-                  -translate-x-1/2
-                  -translate-y-1/2
-                  rotate-45
-                  bg-[#77777c]
-                "
-              />
-            </div>
-          )}
+          {hoveredCell &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <div
+                className="pointer-events-none fixed z-[9999] w-max -translate-x-1/2 -translate-y-full rounded-md bg-[#77777c] px-3 py-2 font-satoshi text-[12px] font-bold text-light shadow-lg"
+                style={{
+                  left: hoveredCell.x,
+                  top: Math.max(48, hoveredCell.y - 10),
+                }}
+              >
+                {hoveredCell.contributions}{" "}
+                {hoveredCell.contributions === 1
+                  ? "contribution"
+                  : "contributions"}{" "}
+                on {hoveredCell.date}
+                <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#77777c]" />
+              </div>,
+              document.body,
+            )}
         </div>
       </div>
 

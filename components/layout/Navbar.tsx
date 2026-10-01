@@ -64,6 +64,7 @@ function Navbar() {
     if (!section) return;
 
     const smoother = ScrollSmoother.get();
+    console.log(smoother);
     if (smoother) {
       smoother.scrollTo(section, true, "top 32px");
     } else {
